@@ -15,11 +15,26 @@ Here are some extra topics covered about sharding that you might have concerns a
 
 In order for shards to communicate, they must send messages to one another, as they are each their own process. You can listen for these messages by adding the following listener in your `index.js` file:
 
+<branch version="11.x">
+	
 ```js
 manager.on('message', (shard, message) => {
 	console.log(`Shard[${shard.id}] : ${message._eval} : ${message._result}`);
 });
 ```
+
+</branch>
+<branch version="12.x">
+
+```js
+manager.on('shardCreate', shard => {
+    shard.on('message', message => {
+	    console.log(`Shard[${shard.id} : ${message._eval} : ${message._result}`);
+    });
+});
+```
+
+</branch>
 
 As the property names imply, the `_eval` property is what the shard is attempting to evaluate, and the `_result` property is the output of said evaluation. However, these properties are only guaranteed if a _shard_ is sending a message. There will also be an `_error` property, should the evaluation have thrown an error.
 
